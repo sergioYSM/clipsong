@@ -2,14 +2,14 @@ import { test as base, expect, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 // Every test fails on console errors and 5xx responses.
-export const test = base.extend<{ guard: void; allowConsole: RegExp[] }>({
-  allowConsole: [[], { option: true }],
+export const test = base.extend<{ guard: void; allowConsole: RegExp | null }>({
+  allowConsole: [null, { option: true }],   // one RegExp: Playwright reads a 2-item array as [value, options]
   guard: [async ({ page, allowConsole }, use) => {
     const problems: string[] = [];
     // wait for hydration after every navigation, so keyboard handlers exist
     const goto = page.goto.bind(page);
     page.goto = (async (url: string, opts?: Parameters<typeof goto>[1]) => { const r = await goto(url, opts); await page.waitForSelector('html[data-ready=true]'); return r; }) as typeof page.goto;
-    page.on('console', (m) => { if (m.type() === 'error' && !allowConsole.some((re) => re.test(m.text()))) problems.push(`console: ${m.text()}`); });
+    page.on('console', (m) => { if (m.type() === 'error' && !allowConsole?.test(m.text())) problems.push(`console: ${m.text()}`); });
     page.on('pageerror', (e) => problems.push(`pageerror: ${e.message}`));
     page.on('response', (r) => { if (r.status() >= 500) problems.push(`${r.status()} ${r.url()}`); });
     await use();

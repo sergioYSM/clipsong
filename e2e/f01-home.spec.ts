@@ -47,7 +47,7 @@ test.describe('F01 play something from Home', () => {
   });
 
   test.describe(() => {
-  test.use({ allowConsole: [/Failed to load resource: net::ERR_FAILED/] });
+  test.use({ allowConsole: /Failed to load resource: net::ERR_FAILED/ });
   test('F01-E4 audio that fails to load: toast and skip, no crash', async ({ page }) => {
     await page.route('**/audio/t01.mp3', (r) => r.abort());
     await page.goto('/album/al1');

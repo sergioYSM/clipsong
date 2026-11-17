@@ -19,4 +19,4 @@ export async function middleware(req: NextRequest) {
   await sb.auth.getUser();
   return res;
 }
-export const config = { matcher: ['/((?!_next/static|_next/image|audio/|icon.svg|api/webhooks).*)'] };
+export const config = { matcher: ['/((?!_next/static|_next/image|audio/|icons/|icon.svg|sw.js|offline.html|manifest.webmanifest|api/webhooks).*)'] };

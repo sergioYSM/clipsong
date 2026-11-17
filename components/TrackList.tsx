@@ -44,7 +44,7 @@ export function TrackList({ tracks, context, variant, playlistId, addedAt, onReo
       </div>
       <div role="rowgroup" className="pt-2">
         {visible.map(({ t, i }, n) => (
-          <Row key={`${t.id}-${i}`} t={t} n={n + 1} index={i} ids={visible.map((v) => v.t.id)} pos={n} context={context}
+          <Row key={t.id} t={t} n={n + 1} index={i} ids={visible.map((v) => v.t.id)} pos={n} context={context}
             cols={cols} compactBadge={variant === 'search'} showAlbum={showAlbum} showCover={showCover} playlistId={playlistId} added={addedAt?.(t, i)} hasAdded={!!addedAt}
             draggable={!!onReorder && !monetizableOnly}
             move={onReorder && !monetizableOnly ? (dir: -1 | 1) => {

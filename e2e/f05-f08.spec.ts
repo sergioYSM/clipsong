@@ -95,7 +95,7 @@ test.describe('Licence filter', () => {
   });
 
   test.describe(() => {
-  test.use({ allowConsole: [/status of 404/] });
+  test.use({ allowConsole: /status of 404/ });
   test('settings and login screens pass axe', async ({ page }) => {
     await page.goto('/settings'); await axe(page, 'Settings');
     await page.goto('/login'); await axe(page, 'Login');

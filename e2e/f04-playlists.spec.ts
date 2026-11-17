@@ -98,7 +98,7 @@ test.describe('F04 playlists', () => {
     const rows = page.getByRole('table').getByRole('row');
     await page.getByRole('row', { name: /Arranque/ }).focus();
     await page.keyboard.press('Alt+ArrowUp');
-    await page.keyboard.press('Alt+ArrowUp');
+    await page.keyboard.press('Alt+ArrowUp');          // pressed fast: both moves must land (BUG-008)
     await expect(rows.nth(1)).toContainText('Arranque');
     await expect(page.getByRole('row', { name: /Arranque/ })).toBeFocused();   // focus follows the row
     await page.keyboard.press('ArrowDown');                                     // arrows move focus between rows

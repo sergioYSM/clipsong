@@ -18,6 +18,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     const done = () => { useLibrary.setState({ hydrated: true }); document.documentElement.dataset.ready = 'true'; };
     if (useLibrary.persist.hasHydrated()) done(); else return useLibrary.persist.onFinishHydration(done);
   }, []);
+  // Installable app: register the service worker (production builds only).
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }, []);
   // Another tab changed the library: reload it here, so this tab's next write
   // does not overwrite that change with stale data.
   useEffect(() => {
