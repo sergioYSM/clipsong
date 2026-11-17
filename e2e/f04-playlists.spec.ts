@@ -113,7 +113,7 @@ test.describe('F04 playlists', () => {
 });
 
 test('BUG-007 every screen has a title naming it', async ({ page }) => {
-  for (const [path, title] of [['/album/al1', 'Horas Lentas · Clipsong'], ['/artist/ar2', 'Los Faros · Clipsong'], ['/collection/tracks', 'Me gustan · Clipsong'], ['/search?q=valle', 'Buscar «valle» · Clipsong']] as const) {
+  for (const [path, title] of [['/album/al1', 'Horas Lentas · Marea Baja · Clipsong'], ['/artist/ar2', 'Los Faros · Clipsong'], ['/collection/tracks', 'Me gustan · Clipsong'], ['/search?q=valle', 'Buscar «valle» · Clipsong']] as const) {
     await page.goto(path);
     await expect(page).toHaveTitle(title);
   }
