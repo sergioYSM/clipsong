@@ -74,3 +74,22 @@ test.describe('F02 search and play', () => {
     }
   });
 });
+
+test('F02-H2 search finds your playlists by name, accents and typos included', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('navigation', { name: 'Tu biblioteca' }).getByRole('button', { name: 'Crear lista' }).first().click();
+  await page.getByRole('button', { name: 'Editar detalles' }).click();
+  await page.getByLabel('Nombre').fill('Vídeos de cocina');
+  await page.getByRole('dialog').getByRole('button', { name: 'Guardar' }).click();
+  await page.getByLabel('Buscar canciones para añadir').fill('valle');
+  await page.getByRole('button', { name: 'Añadir' }).first().click();
+  for (const q of ['cocina', 'videos', 'cosina']) {
+    await page.goto('/search?q=' + q);
+    await expect(page.getByRole('region', { name: 'Listas' }).getByRole('link', { name: /Vídeos de cocina/ })).toBeVisible();
+  }
+  await expect(page.getByRole('region', { name: 'Mejor resultado' }).getByText('Vídeos de cocina')).toBeVisible();
+  await page.getByRole('region', { name: 'Mejor resultado' }).getByRole('link').hover();
+  await page.getByRole('region', { name: 'Mejor resultado' }).getByRole('button', { name: 'Reproducir Vídeos de cocina' }).click();
+  await expect(page.getByRole('region', { name: 'Reproductor' }).getByText('Valle abierto')).toBeVisible();
+  await axe(page, 'Search with playlists');
+});

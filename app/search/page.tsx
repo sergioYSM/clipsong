@@ -3,7 +3,8 @@ import { useTitle } from '@/lib/useTitle';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { allGenres, search, getArtist, getAlbum, albumTracks, artistTracks, getTrack } from '@/lib/data';
+import { allGenres, search, getArtist, getAlbum, albumTracks, artistTracks, getTrack, getTracks, matchPlaylists } from '@/lib/data';
+import { usePublicPlaylists } from '@/lib/usePublicPlaylists';
 import { isMonetizable } from '@/lib/licence';
 import { TrackList } from '@/components/TrackList';
 import { Card, Shelf } from '@/components/Card';
@@ -34,8 +35,10 @@ function Results({ q }: { q: string }) {
   const playContext = usePlayer((s) => s.playContext);
   const pushRecent = useLibrary((s) => s.pushRecent);
   const ctx: PlayContext = { type: 'search', id: `q-${q}`, name: `«${q}»`, href: `/search?q=${encodeURIComponent(q)}` };
+  const mine = matchPlaylists(useLibrary((s) => s.playlists), q);
+  const others = usePublicPlaylists(q).filter((p) => !mine.some((m) => m.id === p.id));
   const songs = r.tracks.filter((t) => !only || isMonetizable(t));
-  if (!r.tracks.length && !r.artists.length && !r.albums.length) {
+  if (!r.tracks.length && !r.artists.length && !r.albums.length && !mine.length && !others.length) {
     return (
       <div className="px-4 py-16 text-center">
         <h1 className="mb-2 text-xl font-bold">Nada con «{q}»</h1>
@@ -44,6 +47,10 @@ function Results({ q }: { q: string }) {
     );
   }
   let top: React.ReactNode = null;
+  if (!r.top && mine[0]) {
+    const p = mine[0]; const ids = getTracks(p.trackIds).filter((t) => !only || isMonetizable(t)).map((t) => t.id);
+    top = <TopCard title={p.name} sub="Tu lista" hue={(p.name.length * 37) % 360} href={`/playlist/${p.id}`} onPlay={() => { const c = { type: 'playlist' as const, id: p.id, name: p.name, href: `/playlist/${p.id}` }; playContext(ids, 0, c); pushRecent(c); }} />;
+  }
   if (r.top?.type === 'track') {
     const t = getTrack(r.top.id)!; const a = getAlbum(t.albumId)!;
     top = <TopCard title={t.title} sub={`Canción · ${getArtist(t.artistId)?.name}`} hue={a.hue} href={`/album/${a.id}`} onPlay={() => { playContext(songs.map((x) => x.id), Math.max(0, songs.findIndex((x) => x.id === t.id)), ctx); pushRecent(ctx); }} />;
@@ -58,13 +65,20 @@ function Results({ q }: { q: string }) {
     <div className="py-4">
       <h1 className="sr-only">Resultados para «{q}»</h1>
       <div className="grid gap-6 px-4 md:px-6 xl:grid-cols-[2fr_3fr]">
-        <section aria-label="Mejor resultado"><h2 className="mb-3 text-xl font-bold">Mejor resultado</h2>{top}</section>
-        <section aria-label="Canciones" className="min-w-0"><h2 className="mb-3 text-xl font-bold">Canciones</h2>
-          <div className="-mx-4 md:-mx-6"><TrackList tracks={r.tracks.slice(0, 5)} context={ctx} variant="search" emptyText="Ninguna canción coincide." /></div>
-        </section>
+        {top && <section aria-label="Mejor resultado"><h2 className="mb-3 text-xl font-bold">Mejor resultado</h2>{top}</section>}
+        {r.tracks.length > 0 && <section aria-label="Canciones" className="min-w-0"><h2 className="mb-3 text-xl font-bold">Canciones</h2>
+          <div className="-mx-4 md:-mx-6"><TrackList tracks={r.tracks.slice(0, 5)} context={ctx} variant="search" /></div>
+        </section>}
       </div>
       <div className="mt-6 px-1 md:px-3">
         {r.artists.length > 0 && <Shelf title="Artistas">{r.artists.map((a) => <Card key={a.id} href={`/artist/${a.id}`} title={a.name} subtitle="Artista" hue={a.hue} round />)}</Shelf>}
+        {(mine.length > 0 || others.length > 0) && (
+          <Shelf title="Listas">
+            {mine.map((p) => <Card key={p.id} href={`/playlist/${p.id}`} title={p.name} subtitle={`Tu lista · ${p.trackIds.length} ${p.trackIds.length === 1 ? 'canción' : 'canciones'}`} hue={(p.name.length * 37) % 360}
+              context={{ type: 'playlist', id: p.id, name: p.name, href: `/playlist/${p.id}` }} trackIds={getTracks(p.trackIds).filter((t) => !only || isMonetizable(t)).map((t) => t.id)} />)}
+            {others.map((p) => <Card key={p.id} href={`/playlist/${p.id}`} title={p.name} subtitle={p.owner ? `Lista de ${p.owner}` : 'Lista pública'} hue={(p.name.length * 37) % 360} />)}
+          </Shelf>
+        )}
         {r.albums.length > 0 && <Shelf title="Álbumes">{r.albums.map((a) => <Card key={a.id} href={`/album/${a.id}`} img={a.coverUrl} title={a.title} subtitle={`${a.year} · ${getArtist(a.artistId)?.name}`} hue={a.hue}
           context={{ type: 'album', id: a.id, name: a.title, href: `/album/${a.id}` }} trackIds={albumTracks(a.id).map((t) => t.id)} />)}</Shelf>}
       </div>

@@ -43,7 +43,7 @@ export function radioFor(trackId: string): Track[] {
 }
 
 /** Typo-tolerant-ish search: substring, then words, then 1-edit distance on words. */
-function score(hay: string, q: string): number {
+export function score(hay: string, q: string): number {
   const h = norm(hay), n = norm(q).trim();
   if (!n) return 0;
   if (h === n) return 100;
@@ -67,6 +67,11 @@ function editLe1(a: string, b: string): boolean {
 }
 
 export interface SearchResults { tracks: Track[]; artists: Artist[]; albums: Album[]; top: { type: 'track' | 'artist' | 'album'; id: string } | null }
+
+/** Playlists whose name or description matches, best first. */
+export function matchPlaylists<P extends { name: string; description?: string }>(list: P[], q: string): P[] {
+  return list.map((p) => ({ p, s: Math.max(score(p.name, q), score(p.description ?? '', q) - 20) })).filter((x) => x.s > 0).sort((a, b) => b.s - a.s).map((x) => x.p);
+}
 
 export function search(q: string): SearchResults {
   const ts = tracks.map((t) => ({ t, s: Math.max(score(t.title, q), score(artistName(t), q) - 10, ...t.genres.map((g) => score(g, q) - 20)) })).filter((x) => x.s > 0).sort((a, b) => b.s - a.s);
