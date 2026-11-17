@@ -53,7 +53,7 @@ export default function Home() {
             </Shelf>
           )}
           <Shelf title={only ? 'Álbumes con canciones aptas para monetizar' : 'Novedades con licencia abierta'}>
-            {albums.map((a) => <Card key={a.id} href={`/album/${a.id}`} title={a.title} subtitle={`${a.year} · ${getArtist(a.artistId)?.name}`} hue={a.hue}
+            {albums.map((a) => <Card key={a.id} href={`/album/${a.id}`} img={a.coverUrl} title={a.title} subtitle={`${a.year} · ${getArtist(a.artistId)?.name}`} hue={a.hue}
               context={{ type: 'album', id: a.id, name: a.title, href: `/album/${a.id}` }} trackIds={albumTracks(a.id).filter((t) => !only || isMonetizable(t)).map((t) => t.id)} />)}
           </Shelf>
           <Shelf title="Artistas independientes">

@@ -1,4 +1,4 @@
-import type { LicenceCode, Track } from './types';
+import type { LicenceCode, Track } from './types.ts';
 
 export interface LicenceInfo {
   code: LicenceCode; name: string; url: string;
@@ -15,13 +15,32 @@ export const licences: Record<LicenceCode, LicenceInfo> = {
     label: 'Apta para monetizar', explain: 'Puedes usarla en vídeos monetizados. Da crédito y, si la modificas, compártela con la misma licencia.' },
   'CC-BY-NC': { code: 'CC-BY-NC', name: 'CC BY-NC 4.0', url: 'https://creativecommons.org/licenses/by-nc/4.0/', commercial: false, derivatives: true, kind: 'nc',
     label: 'Solo uso no comercial', explain: 'No la uses en vídeos monetizados ni en publicidad.' },
+  'CC-BY-NC-SA': { code: 'CC-BY-NC-SA', name: 'CC BY-NC-SA', url: 'https://creativecommons.org/licenses/by-nc-sa/4.0/', commercial: false, derivatives: true, kind: 'nc',
+    label: 'Solo uso no comercial', explain: 'No la uses en vídeos monetizados ni en publicidad.' },
+  'CC-BY-NC-ND': { code: 'CC-BY-NC-ND', name: 'CC BY-NC-ND', url: 'https://creativecommons.org/licenses/by-nc-nd/4.0/', commercial: false, derivatives: false, kind: 'nc',
+    label: 'Solo uso no comercial', explain: 'No la uses en vídeos monetizados ni la modifiques.' },
   'CC-BY-ND': { code: 'CC-BY-ND', name: 'CC BY-ND 4.0', url: 'https://creativecommons.org/licenses/by-nd/4.0/', commercial: true, derivatives: false, kind: 'nd',
     label: 'Sin modificaciones', explain: 'Uso comercial permitido, pero sin recortarla ni mezclarla. Revisa si tu vídeo cuenta como modificación.' },
 };
 
 export const isMonetizable = (t: Track) => licences[t.licence].kind === 'ok';
 
+/** Licence name with the real version, e.g. "CC BY-SA 3.0", from the track's own licence URL. */
+export function licenceName(t: Track): string {
+  const v = t.licenceUrl?.match(/\/(\d\.\d)\/?$/)?.[1];
+  const base = licences[t.licence].name.replace(/ \d\.\d$/, '');
+  return v ? `${base} ${v}` : licences[t.licence].name;
+}
+export const licenceUrl = (t: Track) => t.licenceUrl ?? licences[t.licence].url;
+
 export function creditText(t: Track, artistName: string): string {
-  const l = licences[t.licence];
-  return `Música: "${t.title}" de ${artistName}, con licencia ${l.name} (${l.url}). Encontrada en Clipsong.`;
+  return `Música: "${t.title}" de ${artistName}, con licencia ${licenceName(t)} (${licenceUrl(t)}). Encontrada en Clipsong.`;
+}
+
+/** Map a Creative Commons URL (as Jamendo returns it) to our code. null = not CC, do not import. */
+export function licenceFromUrl(url: string | undefined | null): LicenceCode | null {
+  const m = url?.match(/creativecommons\.org\/licenses\/([a-z-]+)\//i);
+  if (!m) return null;
+  const map: Record<string, LicenceCode> = { by: 'CC-BY', 'by-sa': 'CC-BY-SA', 'by-nc': 'CC-BY-NC', 'by-nd': 'CC-BY-ND', 'by-nc-sa': 'CC-BY-NC-SA', 'by-nc-nd': 'CC-BY-NC-ND' };
+  return map[m[1].toLowerCase()] ?? null;
 }

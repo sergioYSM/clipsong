@@ -32,7 +32,7 @@ export default function ArtistPage() {
       <TrackList tracks={tracks} context={ctx} variant="search" />
       <div className="mt-8 px-1 md:px-3">
         <Shelf title="Discografía">
-          {albums.map((a) => <Card key={a.id} href={`/album/${a.id}`} title={a.title} subtitle={`${a.year} · ${a.kind === 'single' ? 'Single' : a.kind === 'ep' ? 'EP' : 'Álbum'}`} hue={a.hue}
+          {albums.map((a) => <Card key={a.id} href={`/album/${a.id}`} img={a.coverUrl} title={a.title} subtitle={`${a.year} · ${a.kind === 'single' ? 'Single' : a.kind === 'ep' ? 'EP' : 'Álbum'}`} hue={a.hue}
             context={{ type: 'album', id: a.id, name: a.title, href: `/album/${a.id}` }} trackIds={tracks.filter((t) => t.albumId === a.id).map((t) => t.id)} />)}
         </Shelf>
       </div>

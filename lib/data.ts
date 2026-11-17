@@ -1,6 +1,16 @@
 // Fake data layer over the seed catalogue. Same signatures the real API will
 // have (architecture.md): swapping in fetch() calls changes no screen code.
-import { albums, artists, tracks, genres } from './seed';
+import * as demo from './seed';
+import generated from './catalogue.generated.json';
+
+// The imported Jamendo catalogue when there is one (scripts/import-jamendo.ts), else the demo seed.
+const real = (generated as unknown as { artists: Artist[]; albums: Album[]; tracks: Track[] });
+const useReal = real.tracks.length > 0;
+export const catalogueSource: 'jamendo' | 'demo' = useReal ? 'jamendo' : 'demo';
+const artists: Artist[] = useReal ? real.artists : demo.artists;
+const albums: Album[] = useReal ? real.albums : demo.albums;
+const tracks: Track[] = useReal ? real.tracks : demo.tracks;
+const genres: string[] = useReal ? [...new Set(tracks.flatMap((t) => t.genres))].slice(0, 24) : demo.genres;
 import type { Album, Artist, Track } from './types';
 
 const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');

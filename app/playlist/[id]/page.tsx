@@ -57,7 +57,7 @@ export default function PlaylistPage() {
           ]} />
         <span className="ml-auto"><MonetizeChip /></span>
       </Hero>
-      <TrackList tracks={tracks} context={ctx} variant="playlist" playlistId={p.id} addedAt={() => p.updatedAt}
+      <TrackList tracks={tracks} context={ctx} variant="playlist" playlistId={p.id} addedAt={(t) => p.addedAt?.[t.id] ?? p.createdAt}
         onReorder={(f, t) => lib.movePlaylistItem(p.id, f, t)} emptyText="Esta lista está vacía. Busca canciones abajo para añadir." />
       <section aria-label="Añadir canciones" className="mt-6 border-t border-border px-4 pt-6 md:px-6">
         <h2 className="mb-3 text-xl font-bold">Busca canciones para tu lista</h2>

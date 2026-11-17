@@ -91,7 +91,7 @@ function Row({ t, n, index, ids, pos, context, cols, compactBadge, showAlbum, sh
         </button>
       </div>
       <div role="cell" className="flex min-w-0 items-center gap-3">
-        {showCover && album && <Cover hue={album.hue} label={album.title} size={40} />}
+        {showCover && album && <Cover hue={album.hue} label={album.title} src={album.coverUrl} size={40} />}
         <div className="min-w-0">
           <div className={`truncate text-base ${active ? 'text-accent' : 'text-text'}`} title={t.title}>{t.title}</div>
           <Link href={`/artist/${t.artistId}`} className="truncate text-sm text-text-muted hover:text-text hover:underline">{artist?.name}</Link>

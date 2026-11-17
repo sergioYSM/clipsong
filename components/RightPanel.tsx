@@ -19,7 +19,7 @@ function MiniRow({ t, active, onPlay, children, drag }: { t: Track; active?: boo
     <li draggable={!!drag} onDragStart={drag?.onDragStart} onDragOver={(e) => drag && e.preventDefault()} onDrop={drag?.onDrop}
       className="group flex items-center gap-3 rounded-md p-2 hover:bg-surface-hover">
       {drag && <GripVertical size={14} className="-mr-1 cursor-grab text-text-subtle" aria-hidden />}
-      <button type="button" onClick={onPlay} aria-label={`Reproducir ${t.title}`} className="shrink-0"><Cover hue={album.hue} label={album.title} size={40} /></button>
+      <button type="button" onClick={onPlay} aria-label={`Reproducir ${t.title}`} className="shrink-0"><Cover hue={album.hue} label={album.title} src={album.coverUrl} size={40} /></button>
       <div className="min-w-0 flex-1">
         <div className={`truncate text-sm ${active ? 'text-accent' : ''}`}>{t.title}</div>
         <div className="truncate text-xs text-text-muted">{artistName(t)}</div>
@@ -70,7 +70,7 @@ function NowPlaying() {
   const album = getAlbum(t.albumId)!; const artist = getArtist(t.artistId)!; const l = licences[t.licence];
   return (
     <div className="space-y-4 p-4">
-      <Cover hue={album.hue} label={album.title} size="fill" />
+      <Cover hue={album.hue} label={album.title} src={album.coverUrl} size="fill" />
       <div>
         <Link href={`/album/${album.id}`} className="block text-xl font-bold hover:underline">{t.title}</Link>
         <Link href={`/artist/${artist.id}`} className="text-text-muted hover:text-text hover:underline">{artist.name}</Link>

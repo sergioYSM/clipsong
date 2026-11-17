@@ -41,7 +41,7 @@ export function PlayerBar() {
       <div className="flex min-w-0 items-center gap-3">
         {t && album ? (
           <>
-            <Link href={`/album/${album.id}`} aria-label={`Ir al álbum ${album.title}`}><Cover hue={album.hue} label={album.title} size={56} /></Link>
+            <Link href={`/album/${album.id}`} aria-label={`Ir al álbum ${album.title}`}><Cover hue={album.hue} label={album.title} src={album.coverUrl} size={56} /></Link>
             <div className="min-w-0">
               <Link href={`/album/${album.id}`} className="block truncate text-sm font-bold hover:underline" title={t.title}>{t.title}</Link>
               <Link href={`/artist/${t.artistId}`} className="block truncate text-xs text-text-muted hover:text-text hover:underline">{artistName(t)}</Link>

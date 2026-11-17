@@ -32,7 +32,7 @@ export default function AlbumPage() {
   return (
     <div>
       <Hero kind={album.kind === 'single' ? 'Single' : album.kind === 'ep' ? 'EP' : 'Álbum'} title={album.title} hueBg={album.hue}
-        art={<Cover hue={album.hue} label={album.title} size="fill" />}
+        art={<Cover hue={album.hue} label={album.title} src={album.coverUrl} size="fill" />}
         meta={<><Link href={`/artist/${artist.id}`} className="font-bold text-text hover:underline">{artist.name}</Link> · {album.year} · {plural(tracks.length, 'canción', 'canciones')}, {totalDuration(tracks.reduce((s, t) => s + t.durationMs, 0))} · <span className="text-success">{ok} de {tracks.length} aptas para monetizar</span></>}>
         <ContextActions context={ctx} trackIds={tracks.filter((t) => !only || isMonetizable(t)).map((t) => t.id)} saved={saved}
           onSave={() => showToast(toggleSave(album.id) ? 'Guardado en tu biblioteca' : 'Quitado de tu biblioteca')} saveLabel={['Guardar en tu biblioteca', 'Quitar de tu biblioteca']}

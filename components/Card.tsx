@@ -6,8 +6,8 @@ import { usePlayer } from '@/store/player';
 import { useLibrary } from '@/store/library';
 import type { PlayContext } from '@/lib/types';
 
-export function Card({ href, title, subtitle, hue, round, context, trackIds }: {
-  href: string; title: string; subtitle: string; hue: number; round?: boolean; context?: PlayContext; trackIds?: string[];
+export function Card({ href, title, subtitle, hue, round, context, trackIds, img }: {
+  href: string; title: string; subtitle: string; hue: number; round?: boolean; context?: PlayContext; trackIds?: string[]; img?: string;
 }) {
   const ctx = usePlayer((s) => s.context);
   const isPlaying = usePlayer((s) => s.isPlaying);
@@ -19,7 +19,7 @@ export function Card({ href, title, subtitle, hue, round, context, trackIds }: {
   return (
     <Link href={href} className="group relative block rounded-md p-3 transition-colors hover:bg-surface-hover focus-visible:bg-surface-hover">
       <div className="relative mb-3">
-        <Cover hue={hue} label={title} size="fill" round={round} />
+        <Cover hue={hue} label={title} size="fill" round={round} src={img} />
         {canPlay && (
           <PlayButton size="card" label={title} playing={active && isPlaying}
             onClick={() => { if (active) toggle(); else { playContext(trackIds!, 0, context!); pushRecent(context!); } }}

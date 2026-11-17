@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react';
 import { usePlayer } from '@/store/player';
 import { getTrack, getAlbum, artistName } from '@/lib/data';
 import { useUi } from '@/store/ui';
+import { sync } from '@/lib/librarySync';
 
 export function AudioEngine() {
   const ref = useRef<HTMLAudioElement>(null);
@@ -15,6 +16,7 @@ export function AudioEngine() {
   const muted = usePlayer((s) => s.muted);
   const seekTo = usePlayer((s) => s.seekTo);
   const showToast = useUi((s) => s.showToast);
+  const logged = useRef<string | null>(null);   // one history row per play, after 30 s
 
   // load track
   useEffect(() => {
@@ -76,7 +78,12 @@ export function AudioEngine() {
 
   return (
     <audio ref={ref} preload="auto"
-      onTimeUpdate={(e) => usePlayer.getState()._tick(e.currentTarget.currentTime * 1000, (e.currentTarget.duration || 0) * 1000)}
+      onTimeUpdate={(e) => {
+        const s = usePlayer.getState(); const ms = e.currentTarget.currentTime * 1000;
+        s._tick(ms, (e.currentTarget.duration || 0) * 1000);
+        if (ms < 1000) logged.current = null;
+        if (ms >= 30000 && s.q.current && logged.current !== s.q.current) { logged.current = s.q.current; sync.played(s.q.current, s.context, ms); }
+      }}
       onLoadedMetadata={(e) => usePlayer.getState()._tick(e.currentTarget.currentTime * 1000, e.currentTarget.duration * 1000)}
       onWaiting={() => usePlayer.getState()._setBuffering(true)}
       onPlaying={() => usePlayer.getState()._setBuffering(false)}

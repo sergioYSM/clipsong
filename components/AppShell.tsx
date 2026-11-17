@@ -6,6 +6,7 @@ import { RightPanel } from './RightPanel';
 import { MobileNav } from './MobileNav';
 import { Toast } from './Toast';
 import { AudioEngine } from './AudioEngine';
+import { AuthSync } from './AuthSync';
 import { useUi } from '@/store/ui';
 import { useEffect } from 'react';
 import { useLibrary } from '@/store/library';
@@ -32,6 +33,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <MobileNav />
       <Toast />
       <AudioEngine />
+      <AuthSync />
     </div>
   );
 }

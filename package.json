@@ -7,21 +7,33 @@
     "build": "next build",
     "start": "next start -p 3000",
     "seed:audio": "node scripts/make-audio.mjs",
-    "test:unit": "node --test lib/queue.test.ts"
+    "test:unit": "node --no-warnings --test lib/queue.test.ts lib/jamendo.test.ts",
+    "test:db": "scripts/test-db.sh",
+    "test:e2e": "node e2e/vertical-slice.mjs",
+    "db:migrate": "node scripts/migrate.mjs",
+    "db:seed": "node --no-warnings scripts/seed-db.ts",
+    "catalogue:import": "node --no-warnings scripts/import-jamendo.ts"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.7.0",
+    "@supabase/supabase-js": "^2.57.4",
     "lucide-react": "^0.544.0",
     "next": "^15.5.29",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "server-only": "^0.0.1",
+    "stripe": "^18.5.0",
+    "zod": "^4.6.7",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@types/node": "^22.18.0",
+    "@types/pg": "^8.15.5",
     "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.9",
     "autoprefixer": "^10.4.21",
-    "postcss": "^8.5.6",
+    "pg": "^8.16.3",
+    "postcss": "^8.5.33",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.9.2"
   }

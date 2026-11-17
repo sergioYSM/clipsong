@@ -64,7 +64,7 @@ function Results({ q }: { q: string }) {
       </div>
       <div className="mt-6 px-1 md:px-3">
         {r.artists.length > 0 && <Shelf title="Artistas">{r.artists.map((a) => <Card key={a.id} href={`/artist/${a.id}`} title={a.name} subtitle="Artista" hue={a.hue} round />)}</Shelf>}
-        {r.albums.length > 0 && <Shelf title="Álbumes">{r.albums.map((a) => <Card key={a.id} href={`/album/${a.id}`} title={a.title} subtitle={`${a.year} · ${getArtist(a.artistId)?.name}`} hue={a.hue}
+        {r.albums.length > 0 && <Shelf title="Álbumes">{r.albums.map((a) => <Card key={a.id} href={`/album/${a.id}`} img={a.coverUrl} title={a.title} subtitle={`${a.year} · ${getArtist(a.artistId)?.name}`} hue={a.hue}
           context={{ type: 'album', id: a.id, name: a.title, href: `/album/${a.id}` }} trackIds={albumTracks(a.id).map((t) => t.id)} />)}</Shelf>}
       </div>
     </div>
