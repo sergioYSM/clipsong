@@ -1,0 +1,15 @@
+@import './tokens.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body { height: 100%; }
+body { background: var(--color-bg); color: var(--color-text); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+:focus-visible { outline: 2px solid var(--color-text); outline-offset: 2px; }
+.scroll-thin { scrollbar-width: thin; scrollbar-color: var(--color-surface-hover) transparent; }
+@keyframes eq { 0%,100% { transform: scaleY(.3) } 50% { transform: scaleY(1) } }
+.eq span { display:inline-block; width:3px; margin-right:2px; height:12px; background: var(--color-accent); transform-origin: bottom; animation: eq .9s ease-in-out infinite; }
+.eq span:nth-child(2) { animation-delay: .2s } .eq span:nth-child(3) { animation-delay: .4s }
+@keyframes pulse { 50% { opacity: .5 } }
+.skeleton { background: var(--color-surface-raised); animation: pulse 1.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .eq span, .skeleton { animation: none } * { transition: none !important } }
