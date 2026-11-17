@@ -1,4 +1,5 @@
 'use client';
+import { useTitle } from '@/lib/useTitle';
 import Link from 'next/link';
 import { useLibrary } from '@/store/library';
 import { allAlbums, allArtists, albumTracks, allGenres, genreTracks, getArtist, artistTracks, getTracks } from '@/lib/data';
@@ -17,6 +18,7 @@ function greeting() { const h = new Date().getHours(); return h < 6 ? 'Buenas no
 
 export default function Home() {
   const lib = useLibrary();
+  useTitle('Inicio');
   const only = lib.monetizableOnly;
   const albums = allAlbums().filter((a) => !only || albumTracks(a.id).some(isMonetizable));
   const quick = [

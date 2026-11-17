@@ -1,4 +1,5 @@
 'use client';
+import { useTitle } from '@/lib/useTitle';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Pencil, Trash2, Link2, Pin, Search, Plus } from 'lucide-react';
@@ -25,6 +26,7 @@ export default function PlaylistPage() {
   const [editing, setEditing] = useState(false);
   const [q, setQ] = useState('');
   const p = lib.playlists.find((x) => x.id === id);
+  useTitle(p?.name ?? (lib.hydrated ? 'Lista no encontrada' : undefined));
   if (!lib.hydrated) return <div className="p-6"><CardSkeleton n={1} /></div>;
   if (!p) return (
     <div className="flex flex-col items-center gap-3 px-4 py-24 text-center">

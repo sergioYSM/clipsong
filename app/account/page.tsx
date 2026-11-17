@@ -1,4 +1,5 @@
 'use client';
+import { useTitle } from '@/lib/useTitle';
 import Link from 'next/link';
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -120,6 +121,7 @@ function Demo() {
 }
 
 export default function Account() {
+  useTitle('Tu cuenta');
   return (
     <div className="mx-auto max-w-xl px-4 py-10">
       <h1 className="mb-6 text-2xl font-extrabold">Tu cuenta</h1>

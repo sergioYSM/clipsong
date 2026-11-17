@@ -63,4 +63,14 @@ test.describe('F02 search and play', () => {
     await expect(search(page)).toHaveValue('valle');
     await expect(page.getByRole('row', { name: /Valle abierto/ })).toBeVisible();
   });
+
+  test('F02-E8 clicking a result right after load is not undone by the search box (BUG-006)', async ({ page }) => {
+    for (let i = 0; i < 5; i++) {
+      await page.goto('/search?q=valle');
+      await page.waitForTimeout(150);   // inside the old 250 ms window
+      await page.getByRole('link', { name: 'Hilo Fino', exact: true }).first().click();
+      await page.waitForTimeout(500);
+      await expect(page).toHaveURL(/artist\/ar5/);
+    }
+  });
 });

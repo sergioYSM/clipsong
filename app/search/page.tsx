@@ -1,4 +1,5 @@
 'use client';
+import { useTitle } from '@/lib/useTitle';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
@@ -84,6 +85,7 @@ function TopCard({ title, sub, hue, href, round, onPlay }: { title: string; sub:
 
 function SearchPage() {
   const q = (useSearchParams().get('q') ?? '').trim();
+  useTitle(q ? `Buscar «${q}»` : 'Buscar');
   return (
     <>
       <div className="flex items-center gap-2 px-4 pt-2 md:px-6"><MonetizeChip /></div>

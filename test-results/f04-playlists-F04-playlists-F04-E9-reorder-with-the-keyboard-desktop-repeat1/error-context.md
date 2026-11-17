@@ -152,4 +152,13 @@ Call log:
   102 |   });
   103 | });
   104 | 
+  105 | test('BUG-007 every screen has a title naming it', async ({ page }) => {
+  106 |   for (const [path, title] of [['/album/al1', 'Horas Lentas · Clipsong'], ['/artist/ar2', 'Los Faros · Clipsong'], ['/collection/tracks', 'Me gustan · Clipsong'], ['/search?q=valle', 'Buscar «valle» · Clipsong']] as const) {
+  107 |     await page.goto(path);
+  108 |     await expect(page).toHaveTitle(title);
+  109 |   }
+  110 |   await page.getByRole('link', { name: 'Inicio' }).click();
+  111 |   await expect(page).toHaveTitle('Inicio · Clipsong');
+  112 | });
+  113 | 
 ```

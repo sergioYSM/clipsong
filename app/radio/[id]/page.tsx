@@ -1,4 +1,5 @@
 'use client';
+import { useTitle } from '@/lib/useTitle';
 import { useParams, notFound } from 'next/navigation';
 import { Radio } from 'lucide-react';
 import { getTrack, radioFor, artistName } from '@/lib/data';
@@ -13,6 +14,7 @@ export default function RadioPage() {
   const { id } = useParams<{ id: string }>();
   const seed = getTrack(id);
   const only = useLibrary((s) => s.monetizableOnly);
+  useTitle(seed ? `Radio de ${seed.title}` : undefined);
   if (!seed) notFound();
   const tracks = radioFor(seed.id);
   const ctx = { type: 'radio' as const, id: seed.id, name: `Radio de ${seed.title}`, href: `/radio/${seed.id}` };

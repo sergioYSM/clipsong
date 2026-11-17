@@ -1,6 +1,8 @@
 'use client';
+import { useTitle } from '@/lib/useTitle';
 import { useLibrary } from '@/store/library';
 export default function Settings() {
+  useTitle('Ajustes');
   const { monetizableOnly, setMonetizableOnly } = useLibrary();
   return (
     <div className="mx-auto max-w-xl px-4 py-10">

@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Home, Search, X } from 'lucide-react';
 import { useLibrary } from '@/store/library';
 
@@ -11,6 +11,7 @@ function SearchBox() {
   // No useSearchParams here: it would put the box behind a Suspense boundary
   // that hydrates late, so "/" right after load would find no input (BUG-005).
   const [q, setQ] = useState('');
+  const typed = useRef(false);   // only the user's typing navigates, never a sync from the URL (BUG-006)
   // Sync from the URL only when the user is not typing (back/forward, links).
   useEffect(() => {
     const fromUrl = () => {
@@ -22,6 +23,8 @@ function SearchBox() {
     return () => window.removeEventListener('popstate', fromUrl);
   }, [pathname]);
   useEffect(() => {
+    if (!typed.current) return;
+    typed.current = false;
     if (pathname !== '/search' && !q) return;
     const id = setTimeout(() => router.replace(q ? `/search?q=${encodeURIComponent(q)}` : '/search'), 250);
     return () => clearTimeout(id);
@@ -30,10 +33,10 @@ function SearchBox() {
   return (
     <form role="search" onSubmit={(e) => { e.preventDefault(); router.push(`/search?q=${encodeURIComponent(q)}`); }} className="flex h-12 w-full max-w-[480px] items-center gap-2 rounded-full bg-surface-raised px-4 hover:bg-surface-hover focus-within:ring-2 focus-within:ring-text">
       <Search size={20} className="text-text-muted" aria-hidden />
-      <input id="global-search" type="search" value={q} onChange={(e) => setQ(e.target.value)}
+      <input id="global-search" type="search" value={q} onChange={(e) => { typed.current = true; setQ(e.target.value); }}
         placeholder="¿Qué quieres escuchar?" aria-label="Buscar canciones, artistas o álbumes" autoComplete="off"
         className="w-full bg-transparent text-base placeholder:text-text-subtle focus:outline-none [&::-webkit-search-cancel-button]:hidden" />
-      {q && <button type="button" onClick={() => setQ('')} aria-label="Borrar búsqueda" className="text-text-muted hover:text-text"><X size={18} /></button>}
+      {q && <button type="button" onClick={() => { typed.current = true; setQ(''); }} aria-label="Borrar búsqueda" className="text-text-muted hover:text-text"><X size={18} /></button>}
     </form>
   );
 }

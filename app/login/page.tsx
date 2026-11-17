@@ -1,4 +1,5 @@
 'use client';
+import { useTitle } from '@/lib/useTitle';
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useLibrary } from '@/store/library';
@@ -70,6 +71,7 @@ function DemoLogin() {
 }
 
 export default function Login() {
+  useTitle('Entrar');
   return (
     <div className="mx-auto max-w-sm px-4 py-12">
       <h1 className="mb-6 text-2xl font-extrabold">Música que puedes usar. Empieza gratis.</h1>

@@ -1,4 +1,5 @@
 'use client';
+import { useTitle } from '@/lib/useTitle';
 import Link from 'next/link';
 import { useParams, notFound } from 'next/navigation';
 import { Link2, ListPlus } from 'lucide-react';
@@ -24,6 +25,7 @@ export default function AlbumPage() {
   const addToQueue = usePlayer((s) => s.addToQueue);
   const showToast = useUi((s) => s.showToast);
   const copy = useCopy();
+  useTitle(album?.title);
   if (!album) notFound();
   const artist = getArtist(album.artistId)!;
   const tracks = albumTracks(album.id);

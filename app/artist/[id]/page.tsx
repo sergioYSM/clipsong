@@ -1,4 +1,5 @@
 'use client';
+import { useTitle } from '@/lib/useTitle';
 import { useParams, notFound } from 'next/navigation';
 import { getArtist, artistTracks, artistAlbums } from '@/lib/data';
 import { isMonetizable } from '@/lib/licence';
@@ -17,6 +18,7 @@ export default function ArtistPage() {
   const toggleFollow = useLibrary((s) => s.toggleFollow);
   const only = useLibrary((s) => s.monetizableOnly);
   const showToast = useUi((s) => s.showToast);
+  useTitle(artist?.name);
   if (!artist) notFound();
   const tracks = artistTracks(artist.id);
   const albums = artistAlbums(artist.id);

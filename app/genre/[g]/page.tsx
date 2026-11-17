@@ -1,4 +1,5 @@
 'use client';
+import { useTitle } from '@/lib/useTitle';
 import { useParams } from 'next/navigation';
 import { genreTracks } from '@/lib/data';
 import { isMonetizable } from '@/lib/licence';
@@ -12,6 +13,7 @@ import { useLibrary } from '@/store/library';
 export default function GenrePage() {
   const g = decodeURIComponent(useParams<{ g: string }>().g);
   const only = useLibrary((s) => s.monetizableOnly);
+  useTitle(g.charAt(0).toUpperCase() + g.slice(1));
   const tracks = genreTracks(g);
   const title = g.charAt(0).toUpperCase() + g.slice(1);
   const ctx = { type: 'search' as const, id: `genre-${g}`, name: title, href: `/genre/${encodeURIComponent(g)}` };

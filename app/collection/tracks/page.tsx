@@ -1,4 +1,5 @@
 'use client';
+import { useTitle } from '@/lib/useTitle';
 import { Heart } from 'lucide-react';
 import { useLibrary } from '@/store/library';
 import { getTracks } from '@/lib/data';
@@ -12,6 +13,7 @@ import { CardSkeleton } from '@/components/Card';
 
 export default function Liked() {
   const lib = useLibrary();
+  useTitle('Me gustan');
   const ids = Object.entries(lib.liked).sort((a, b) => b[1] - a[1]).map(([id]) => id);
   const tracks = getTracks(ids);
   const ctx = { type: 'liked' as const, id: 'liked', name: 'Me gustan', href: '/collection/tracks' };
