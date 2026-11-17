@@ -47,6 +47,14 @@ export function TrackList({ tracks, context, variant, playlistId, addedAt, onReo
           <Row key={`${t.id}-${i}`} t={t} n={n + 1} index={i} ids={visible.map((v) => v.t.id)} pos={n} context={context}
             cols={cols} compactBadge={variant === 'search'} showAlbum={showAlbum} showCover={showCover} playlistId={playlistId} added={addedAt?.(t, i)} hasAdded={!!addedAt}
             draggable={!!onReorder && !monetizableOnly}
+            move={onReorder && !monetizableOnly ? (dir: -1 | 1) => {
+              const to = i + dir;
+              if (to < 0 || to >= tracks.length) return;
+              onReorder(i, to);
+              useUi.getState().showToast(`Movida a la posición ${to + 1}`);
+              // keep keyboard focus on the row that moved
+              requestAnimationFrame(() => document.querySelector<HTMLElement>(`[data-row-index="${to}"]`)?.focus());
+            } : undefined}
             onDragStart={() => setDragFrom(i)} onDrop={() => { if (dragFrom !== null && onReorder && dragFrom !== i) onReorder(dragFrom, i); setDragFrom(null); }} />
         ))}
       </div>
@@ -54,9 +62,9 @@ export function TrackList({ tracks, context, variant, playlistId, addedAt, onReo
   );
 }
 
-function Row({ t, n, index, ids, pos, context, cols, compactBadge, showAlbum, showCover, playlistId, added, hasAdded, draggable, onDragStart, onDrop }: {
+function Row({ t, n, index, ids, pos, context, cols, compactBadge, showAlbum, showCover, playlistId, added, hasAdded, draggable, onDragStart, onDrop, move }: {
   t: Track; n: number; index: number; ids: string[]; pos: number; context: PlayContext; cols: string; compactBadge: boolean; showAlbum: boolean; showCover: boolean;
-  playlistId?: string; added?: number; hasAdded: boolean; draggable: boolean; onDragStart: () => void; onDrop: () => void;
+  playlistId?: string; added?: number; hasAdded: boolean; draggable: boolean; onDragStart: () => void; onDrop: () => void; move?: (dir: -1 | 1) => void;
 }) {
   const current = usePlayer((s) => s.q.current);
   const ctx = usePlayer((s) => s.context);
@@ -77,7 +85,19 @@ function Row({ t, n, index, ids, pos, context, cols, compactBadge, showAlbum, sh
   return (
     <div role="row" tabIndex={0} aria-current={active ? 'true' : undefined}
       onDoubleClick={playThis}
-      onKeyDown={(e) => { if (e.key === 'Enter') playThis(); if ((e.shiftKey && e.key === 'F10') || e.key === 'ContextMenu') openAt(e); }}
+      data-row-index={index}
+      aria-keyshortcuts={move ? 'Alt+ArrowUp Alt+ArrowDown' : undefined}
+      onKeyDown={(e) => {
+        if (e.target !== e.currentTarget) return;
+        if (e.key === 'Enter') playThis();
+        else if ((e.shiftKey && e.key === 'F10') || e.key === 'ContextMenu') openAt(e);
+        else if (move && e.altKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) { e.preventDefault(); move(e.key === 'ArrowUp' ? -1 : 1); }
+        else if (!e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+          e.preventDefault();
+          const rows = Array.from(e.currentTarget.parentElement!.querySelectorAll<HTMLElement>('[role=row]'));
+          rows[rows.indexOf(e.currentTarget) + (e.key === 'ArrowDown' ? 1 : -1)]?.focus();
+        }
+      }}
       onContextMenu={openAt}
       draggable={draggable} onDragStart={onDragStart} onDragOver={(e) => draggable && e.preventDefault()} onDrop={onDrop}
       className={`group grid ${cols} items-center gap-4 rounded-sm px-4 py-2 hover:bg-surface-hover focus-visible:bg-surface-hover ${menu ? 'bg-surface-hover' : ''}`}>
@@ -116,7 +136,7 @@ function Row({ t, n, index, ids, pos, context, cols, compactBadge, showAlbum, sh
           <MoreHorizontal size={16} />
         </button>
       </div>
-      {menu && <Menu label={`Opciones de ${t.title}`} x={menu.x} y={menu.y} onClose={close} items={buildMenu(t, playlistId ? { playlistId, index } : {})} />}
+      {menu && <Menu label={`Opciones de ${t.title}`} x={menu.x} y={menu.y} onClose={close} items={buildMenu(t, playlistId ? { playlistId, index, move } : {})} />}
     </div>
   );
 }

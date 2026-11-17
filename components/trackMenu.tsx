@@ -1,6 +1,6 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { ListPlus, Heart, Plus, User, Disc3, Link2, Quote, Trash2, Radio, Scale } from 'lucide-react';
+import { ListPlus, Heart, Plus, User, Disc3, Link2, Quote, Trash2, Radio, Scale, ArrowUp, ArrowDown } from 'lucide-react';
 import type { MenuItem } from './Menu';
 import type { Track } from '@/lib/types';
 import { artistName } from '@/lib/data';
@@ -17,7 +17,7 @@ export function useTrackMenu() {
   const showToast = useUi((s) => s.showToast);
   const copy = useCopy();
 
-  return (t: Track, opts: { playlistId?: string; index?: number } = {}): MenuItem[] => {
+  return (t: Track, opts: { playlistId?: string; index?: number; move?: (dir: -1 | 1) => void } = {}): MenuItem[] => {
     const liked = !!lib.liked[t.id];
     const ownPlaylists = lib.playlists;
     const addTo = (pid: string, name: string) => {
@@ -43,6 +43,12 @@ export function useTrackMenu() {
     ];
     if (opts.playlistId !== undefined && opts.index !== undefined) {
       const pid = opts.playlistId, idx = opts.index;
+      if (opts.move) {
+        const mv = opts.move;
+        items.push({ label: '', divider: true },
+          { label: 'Mover arriba (Alt+↑)', icon: <ArrowUp size={16} />, onSelect: () => mv(-1) },
+          { label: 'Mover abajo (Alt+↓)', icon: <ArrowDown size={16} />, onSelect: () => mv(1) });
+      }
       items.push({ label: '', divider: true }, { label: 'Quitar de esta lista', icon: <Trash2 size={16} />, danger: true, onSelect: () => { lib.removeFromPlaylist(pid, idx); showToast('Quitada de la lista'); } });
     }
     return items;

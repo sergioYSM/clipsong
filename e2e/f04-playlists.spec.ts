@@ -92,13 +92,23 @@ test.describe('F04 playlists', () => {
     await expect(page.getByText('Esta lista está vacía')).toBeVisible();
   });
 
-  test('F04-E9 reorder with the keyboard', async ({ page }) => {
-    test.fail(true, 'known gap: reorder is mouse-only (BUG-004)');
+  test('F04-E9 reorder with the keyboard (BUG-004)', async ({ page }) => {
     await newPlaylist(page);
-    for (const q of ['valle', 'río']) { await page.getByLabel('Buscar canciones para añadir').fill(q); await page.getByRole('button', { name: 'Añadir' }).first().click(); }
-    await page.getByRole('row', { name: /Río de fondo/ }).focus();
+    for (const q of ['valle', 'río', 'arranque']) { await page.getByLabel('Buscar canciones para añadir').fill(q); await page.getByRole('button', { name: 'Añadir' }).first().click(); }
+    const rows = page.getByRole('table').getByRole('row');
+    await page.getByRole('row', { name: /Arranque/ }).focus();
     await page.keyboard.press('Alt+ArrowUp');
-    await expect(page.getByRole('row').nth(1)).toContainText('Río de fondo');
+    await page.keyboard.press('Alt+ArrowUp');
+    await expect(rows.nth(1)).toContainText('Arranque');
+    await expect(page.getByRole('row', { name: /Arranque/ })).toBeFocused();   // focus follows the row
+    await page.keyboard.press('ArrowDown');                                     // arrows move focus between rows
+    await expect(page.getByRole('row', { name: /Valle abierto/ })).toBeFocused();
+    await page.keyboard.press('Shift+F10');
+    await page.getByRole('menuitem', { name: /Mover abajo/ }).click();
+    await expect(rows.nth(3)).toContainText('Valle abierto');
+    await page.reload();
+    await expect(rows.nth(1)).toContainText('Arranque');                        // order persisted
+    await axe(page, 'Playlist (reordered)');
   });
 });
 
