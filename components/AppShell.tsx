@@ -15,8 +15,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const collapsed = useUi((s) => s.sidebarCollapsed);
   // localStorage hydration is synchronous on the client; effects run after it.
   useEffect(() => {
-    const done = () => useLibrary.setState({ hydrated: true });
+    const done = () => { useLibrary.setState({ hydrated: true }); document.documentElement.dataset.ready = 'true'; };
     if (useLibrary.persist.hasHydrated()) done(); else return useLibrary.persist.onFinishHydration(done);
+  }, []);
+  // Another tab changed the library: reload it here, so this tab's next write
+  // does not overwrite that change with stale data.
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => { if (e.key === 'clipsong-library') useLibrary.persist.rehydrate(); };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
   }, []);
   return (
     <div className="flex h-dvh flex-col bg-bg">

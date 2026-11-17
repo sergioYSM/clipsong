@@ -84,7 +84,7 @@ function Row({ t, n, index, ids, pos, context, cols, compactBadge, showAlbum, sh
       <div role="cell" className="relative flex h-4 items-center justify-end text-text-muted tabular-nums">
         {draggable && <GripVertical size={14} className="absolute -left-4 hidden cursor-grab text-text-subtle group-hover:block" aria-hidden />}
         <span className={`group-hover:hidden ${active ? 'hidden' : ''}`}>{n}</span>
-        {active && isPlaying && <span className="eq group-hover:hidden" aria-label="Sonando"><span /><span /><span /></span>}
+        {active && isPlaying && <span className="eq group-hover:hidden" role="img" aria-label="Sonando"><span /><span /><span /></span>}
         {active && !isPlaying && <span className="text-accent group-hover:hidden">{n}</span>}
         <button type="button" onClick={playThis} aria-label={`${active && isPlaying ? 'Pausar' : 'Reproducir'} ${t.title}`} className="hidden text-text group-hover:block group-focus-within:block">
           <Play size={14} fill="currentColor" />

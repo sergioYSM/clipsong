@@ -27,6 +27,8 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.63.0",
     "@types/node": "^22.18.0",
     "@types/pg": "^8.15.5",
     "@types/react": "^19.1.12",
